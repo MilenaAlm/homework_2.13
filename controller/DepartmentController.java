@@ -1,39 +1,40 @@
 package pro.sky.homework_2_13.controller;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pro.sky.homework_2_13.Employee;
 import pro.sky.homework_2_13.services.DepartmentService;
 
 import java.util.List;
+import java.util.Map;
+
 @RestController
+@RequestMapping("/department")
 public class DepartmentController {
-    private final DepartmentService service;
-    public DepartmentController(DepartmentService service) {
-        this.service = service;
-    }
-    @GetMapping("/departments")
-    public String welcome() {
-        return "Welcome to departments";
-    }
-    @GetMapping("/departments/max-salary")
-    public Employee getEmpWithMaxSalary(@RequestParam("departmentId") Integer id) {
-            return service.getEmpWithMaxSalary(id);
-        }
+    private final DepartmentService departmentService;
 
-        @GetMapping("/departments/min-salary")
-        public Employee getEmpWithMinSalary(@RequestParam("departmentId") Integer id) {
-            return service.getEmpWithMinSalary(id);
-        }
+    public DepartmentController(DepartmentService departmentService) {
+        this.departmentService = departmentService;
 
-        @GetMapping("/departments/all")
-        public List<Employee> getEmpByDepartment(@RequestParam(value = "departmentId",
-                required = false) Integer id) {
-            if ((id == null)) {
-                return service.showAll();
-            }
-            return service.showByDepartment(id);
-        }
+    }
+    @GetMapping(value = "/{id}/employees")
+    public List<Employee> employeesFromDepartment(@PathVariable int id) {
+        return departmentService.employeesFromDepartment(id);
+    }
+    @GetMapping( "/{id}/salary/sum")
+        public double sumSalaryFromDepartment(@PathVariable int id) {
+        return departmentService.sumSalaryFromDepartment();
+
+    }
+    @GetMapping( "/{id}/salary/max")
+        public double maxSalaryFromDepartment(@PathVariable int id) {
+            return departmentService.maxSalaryFromDepartment(id);
+    }
+    @GetMapping( "/{id}/salary/min")
+        public double minSalaryFromDepartment(@PathVariable int id) {
+            return departmentService.minSalaryFromDepartment(id);
+    }
+    @GetMapping( "/employees")
+    public Map<Integer, List<Employee>> employeesGroupByDepartment() {
+        return departmentService.employeesGroupedByDepartment();
     }
 
+}

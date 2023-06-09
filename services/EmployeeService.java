@@ -5,79 +5,62 @@ import pro.sky.homework_2_13.Exceptions.EmployeeAlreadyAddedException;
 import pro.sky.homework_2_13.Exceptions.EmployeeNotFoundException;
 import pro.sky.homework_2_13.Exceptions.EmployeeStorageIsFullException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
-public class EmployeeService implements EmployeeServiceInt {
-    private static final int size  = 10;
-    private final Employee[] employees = new Employee[size];
+public class EmployeeService  {
+    private static final int LIMIT  = 10;
+    private final List<Employee> employees = new ArrayList<>();
 
     private final ValidatorService validatorService;
-    private Iterable<Object> all;
     private int department;
 
     public EmployeeService(ValidatorService validatorService) {
         this.validatorService = validatorService;
     }
-
-    @Override
-    public Employee addEmployee(String firstName,
-                                String lastName, int department, double salary) {
-        int indexForAdd = -1;
+    public Employee add(String firstName,
+                        String lastName,
+                        int department,
+                        double salary) {
         Employee employee = new Employee(
                 validatorService.validateFirstName(firstName),
                 validatorService.validateLastName(lastName),
                 department,
                 salary
         );
-        for (int i = 0; i < employees.length ; i++) {
-            if (employees[i] == null && indexForAdd == -1) {
-                indexForAdd = i;
-            }
-            if(employees[i]!=null && employees.equals(employee)){
-                throw new EmployeeAlreadyAddedException();
-                }
-            }
-            if (indexForAdd ==-1) {
-                throw new EmployeeStorageIsFullException();
-            }
-            employees [indexForAdd] = employee;
-            return employees [indexForAdd];
+        if (employees.contains(employee)) {
+            throw new EmployeeAlreadyAddedException();
         }
-
-    @Override
-    public Employee removeEmployee(String firstName, String lastName) {
-        return null;
-    }
-
-    @Override
-    public Employee findEmployee(String firstName, String lastName) {
-        return null;
-    }
-
-    @Override
-    public Employee removeEmployee(String firstName, String lastName, int department, double salary) {
-        Employee employee = new Employee(firstName, lastName, department, salary);
-        for (int i = 0; i < employees.length; i++) {
-            if (employee.equals(employees[i])) {
-                employees[i] = null;
-                return employee;
-            }
+        if (employees.size() < LIMIT) {
+            employees.add(employee);
+            return employee;
         }
-        throw new EmployeeNotFoundException();
+        throw new EmployeeStorageIsFullException();
     }
 
-    @Override
-    public Employee findEmployee(String firstName, String lastName, int department, double salary) {
-        Employee employee = new Employee(firstName, lastName, department, salary);
-        for (Employee emp : employees) {
-            if (employees.equals(emp)) {
-                return employee;
-            }
-        }
-        throw new EmployeeNotFoundException();
+
+    public Employee remove(String firstName,
+                           String lastName) {
+        Employee employee = employees.stream()
+                .filter(emp -> emp.getFirstName().equals(firstName) && emp.getLastName().equals(lastName))
+                .findFirst()
+                .orElseThrow(EmployeeNotFoundException::new);
+        employees.remove(employee);
+        return employee;
     }
 
-    public Iterable<Object> getAll() {
-        return all;
+    public Employee find(String firstName,
+                         String lastName) {
+        return employees.stream()
+                .filter(employee -> employee.getFirstName().equals(firstName) && employee.getLastName().equals(lastName))
+                .findFirst()
+                .orElseThrow(EmployeeNotFoundException::new);
     }
+
+    public List<Employee> getAll(){
+        return new ArrayList<>(employees);
+    }
+
 }

@@ -13,8 +13,8 @@ public class Employee {
     public Employee(String firstName, String lastName, int department, double salary) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.department = this.department;
-        this.salary = this.salary;
+        this.department = department;
+        this.salary = salary;
         this.idEmployeer = id++;
     }
 
