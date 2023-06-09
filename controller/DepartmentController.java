@@ -20,8 +20,8 @@ public class DepartmentController {
         return departmentService.employeesFromDepartment(id);
     }
     @GetMapping( "/{id}/salary/sum")
-        public double sumSalaryFromDepartment(@PathVariable int id) {
-        return departmentService.sumSalaryFromDepartment();
+        public double sumSalaryFromDepartment(@PathVariable int department) {
+        return departmentService.sumSalaryFromDepartment(department);
 
     }
     @GetMapping( "/{id}/salary/max")
